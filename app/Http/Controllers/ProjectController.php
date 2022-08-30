@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Resources\ProjectResource;
 use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ProjectController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $projects = Project::all();
 
         return response()->json([
@@ -17,7 +19,12 @@ class ProjectController extends Controller
         ], 200);
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
+        Validator::make($request->all(), [
+            'name' => 'required',
+        ])->validate();
+
         $project = Project::create([
             'name' => $request->name,
         ]);
@@ -28,23 +35,31 @@ class ProjectController extends Controller
         ], 200);
     }
 
-    public function show($id){
-        $project = Project::find($id);
+    public function show($id)
+    {
+        $project = Project::findOrFail($id);
 
         return response()->json([
             'message' => 'Succesfully listed project',
             'project' => new ProjectResource($project),
-            
+
         ], 200);
     }
 
-    public function projectParticipantes($id){
+    public function projectParticipantes($id)
+    {
         $projectParticipantes = GlobalFunctions::listAllParticipantes($id, Project::class, 'project participante');
 
-        return response()->json([
-            'message' => 'Listed all participantes of this project',
-            'users' => $projectParticipantes,
-            
-        ], 200);
+        if ($projectParticipantes[0]) {
+            return response()->json([
+                'message' => 'Listed all participantes of this project',
+                'users' => $projectParticipantes[1],
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => 'Error. That permission not exists',
+                'users' => $projectParticipantes[1],
+            ], 422);
+        }
     }
 }

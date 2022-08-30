@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\ActivityResource;
 use App\Models\Activity;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ActivityController extends Controller
 {
@@ -18,6 +19,11 @@ class ActivityController extends Controller
     }
 
     public function store(Request $request){
+        Validator::make($request->all(), [
+            'name' => 'required',
+            'project_id' => 'required','Integer'
+        ])->validate();
+        
         $activity = Activity::create([
             'name' => $request->name,
             'project_id' => $request->project_id,
@@ -30,7 +36,7 @@ class ActivityController extends Controller
     }
 
     public function show($id){
-        $activity = Activity::find($id);
+        $activity = Activity::findOrFail($id);
 
         return response()->json([
             'message' => 'Succesfully listed activity',
@@ -41,10 +47,16 @@ class ActivityController extends Controller
     public function activityParticipantes($id){
         $activityParticipantes = GlobalFunctions::listAllParticipantes($id, Activity::class, 'activity participante');
 
-        return response()->json([
-            'message' => 'Listed all participantes of this activity',
-            'users' => $activityParticipantes,
-            
-        ], 200);
+        if ($activityParticipantes[0]) {
+            return response()->json([
+                'message' => 'Listed all participantes of this activity',
+                'users' => $activityParticipantes[1],
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => 'Error. That permission not exists',
+                'users' => $activityParticipantes[1],
+            ], 422);
+        }
     }
 }
