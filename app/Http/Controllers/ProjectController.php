@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProjectResource;
 use App\Models\Project;
 use Illuminate\Http\Request;
 
@@ -32,7 +33,18 @@ class ProjectController extends Controller
 
         return response()->json([
             'message' => 'Succesfully listed project',
-            'project' => $project->activities,
+            'project' => new ProjectResource($project),
+            
+        ], 200);
+    }
+
+    public function projectParticipantes($id){
+        $projectParticipantes = GlobalFunctions::listAllParticipantes($id, Project::class, 'project participante');
+
+        return response()->json([
+            'message' => 'Listed all participantes of this project',
+            'users' => $projectParticipantes,
+            
         ], 200);
     }
 }

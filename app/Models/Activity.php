@@ -21,4 +21,20 @@ class Activity extends Model
     {
         return $this->belongsTo(Project::class);
     }
+
+    /**
+     * Get the incidents for the activity.
+     */
+    public function incidents()
+    {
+        return $this->hasMany(Incident::class);
+    }
+
+    /**
+     * The users that belong to the activity.
+     */
+    public function users()
+    {
+        return $this->belongsToMany(User::class)->with('permissions');
+    }
 }

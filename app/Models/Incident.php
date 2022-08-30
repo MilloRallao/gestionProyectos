@@ -5,24 +5,25 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Project extends Model
+class Incident extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         "name",
+        "activity_id",
     ];
 
     /**
-     * Get the activities for the project.
+     * Get the activity that owns the incident.
      */
-    public function activities()
+    public function activity()
     {
-        return $this->hasMany(Activity::class);
+        return $this->belongsTo(Activity::class);
     }
 
     /**
-     * The users that belong to the project.
+     * The users that belong to the incident.
      */
     public function users()
     {

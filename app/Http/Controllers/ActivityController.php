@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ActivityResource;
 use App\Models\Activity;
 use Illuminate\Http\Request;
 
@@ -33,7 +34,17 @@ class ActivityController extends Controller
 
         return response()->json([
             'message' => 'Succesfully listed activity',
-            'activity' => $activity,
+            'activity' => new ActivityResource($activity),
+        ], 200);
+    }
+
+    public function activityParticipantes($id){
+        $activityParticipantes = GlobalFunctions::listAllParticipantes($id, Activity::class, 'activity participante');
+
+        return response()->json([
+            'message' => 'Listed all participantes of this activity',
+            'users' => $activityParticipantes,
+            
         ], 200);
     }
 }
