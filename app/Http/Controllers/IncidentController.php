@@ -59,11 +59,11 @@ class IncidentController extends Controller
             return response()->json([
                 'message' => 'Listed all incidents of this activity',
                 'activityIncidents' => $activityIncidents,
-            ]);
+            ], 200);
         } else {
             return response()->json([
                 'message' => 'Forbidden. You do not have permissions',
-            ]);
+            ], 422);
         }
     }
 }

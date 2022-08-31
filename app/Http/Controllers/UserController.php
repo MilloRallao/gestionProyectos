@@ -11,7 +11,6 @@ class UserController extends Controller
     public function assignProject(Request $request)
     {
         $user = User::find($request->user_id);
-
         $user->projects()->syncWithoutDetaching($request->project_id);
         $user->givePermissionTo($request->permissions);
 
